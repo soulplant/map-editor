@@ -3,10 +3,12 @@ package com.dc.mappy;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
@@ -16,16 +18,41 @@ public class GridPanel extends JPanel {
   private final TileSet tileSet;
   private final Grid<Integer> grid;
 
-  public GridPanel(GridController controller, TileSet tileSet, Grid<Integer> grid) {
+  public GridPanel(final GridController controller, final TileSet tileSet, Grid<Integer> grid) {
     this.controller = controller;
     this.tileSet = tileSet;
     this.grid = grid;
 
     setPreferredSize(new Dimension(640, 480));
+    addMouseMotionListener(new MouseMotionListener() {
+      @Override
+      public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+      }
+
+      @Override
+      public void mouseMoved(MouseEvent e) {
+        controller.onMouseMoved(getLogicalPointFromScreenPoint(e.getPoint()));
+        repaint();
+      }
+
+      private Point getLogicalPointFromScreenPoint(Point point) {
+        int x = point.x / tileSet.getTileWidthPx();
+        int y = point.y / tileSet.getTileHeightPx();
+        return new Point(x, y);
+      }
+    });
     addMouseListener(new MouseAdapter() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        onMouseClicked(e);
+      public void mousePressed(MouseEvent e) {
+        controller.onMousePressed();
+        repaint();
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent e) {
+        controller.onMouseReleased();
+        repaint();
       }
     });
 
@@ -40,18 +67,6 @@ public class GridPanel extends JPanel {
 
   private void onKeyPressed(KeyEvent e) {
     controller.onKeyPressed(e.getKeyCode());
-    repaint();
-  }
-
-  private void onMouseClicked(MouseEvent e) {
-    int x = e.getX() / tileSet.getTileWidthPx();
-    int y = e.getY() / tileSet.getTileHeightPx();
-
-    if (e.getButton() == MouseEvent.BUTTON1) {
-      controller.onClick(x, y);
-    } else {
-      controller.onClickRight(x, y);
-    }
     repaint();
   }
 

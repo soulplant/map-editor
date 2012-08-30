@@ -1,10 +1,13 @@
 package com.dc.mappy;
 
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 
 public class GridController {
   private final Grid<Integer> grid;
+  private Point cursorPosition = new Point(0, 0);
+  private boolean isDrawing = false;
 
   public GridController(Grid<Integer> grid) {
     this.grid = grid;
@@ -22,7 +25,19 @@ public class GridController {
     }
   }
 
-  public void onClickRight(int x, int y) {
-    grid.set(x, y, 0);
+  public void onMousePressed() {
+    isDrawing = true;
+    grid.set(cursorPosition.x, cursorPosition.y, 1);
+  }
+
+  public void onMouseReleased() {
+    isDrawing = false;
+  }
+
+  public void onMouseMoved(Point point) {
+    this.cursorPosition = point;
+    if (isDrawing) {
+      grid.set(cursorPosition.x, cursorPosition.y, 1);
+    }
   }
 }
