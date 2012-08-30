@@ -8,13 +8,11 @@ public class GridController {
   private final Grid<Integer> grid;
   private Point cursorPosition = new Point(0, 0);
   private boolean isDrawing = false;
+  private final TilePicker tilePicker;
 
-  public GridController(Grid<Integer> grid) {
+  public GridController(Grid<Integer> grid, TilePicker tilePicker) {
     this.grid = grid;
-  }
-
-  public void onClick(int x, int y) {
-    grid.set(x, y, 1);
+    this.tilePicker = tilePicker;
   }
 
   public void onKeyPressed(int keyCode) {
@@ -27,7 +25,7 @@ public class GridController {
 
   public void onMousePressed() {
     isDrawing = true;
-    grid.set(cursorPosition.x, cursorPosition.y, 1);
+    drawTileAtCursor();
   }
 
   public void onMouseReleased() {
@@ -37,7 +35,11 @@ public class GridController {
   public void onMouseMoved(Point point) {
     this.cursorPosition = point;
     if (isDrawing) {
-      grid.set(cursorPosition.x, cursorPosition.y, 1);
+      drawTileAtCursor();
     }
+  }
+
+  private void drawTileAtCursor() {
+    grid.set(cursorPosition.x, cursorPosition.y, tilePicker.getCurrentTile());
   }
 }

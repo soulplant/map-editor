@@ -1,7 +1,9 @@
 package com.dc.mappy;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 
 import javax.swing.ImageIcon;
 
@@ -18,14 +20,11 @@ public class TileSet {
     image = new ImageIcon(filename).getImage();
     this.tilesWide = image.getWidth(null) / tileWidthPx;
     this.tilesHigh = image.getHeight(null) / tileHeightPx;
-    System.out.println("tilesWide = " + tilesWide);
-    System.out.println("tilesHigh = " + tilesHigh);
   }
 
-
   public void drawTile(Graphics g, int tileIndex, int dx, int dy) {
-    int tileX = tileIndex % tilesWide;
-    int tileY = tileIndex / tilesWide;
+    int tileX = tileIndex % getTilesWide();
+    int tileY = tileIndex / getTilesWide();
     int xPx = dx * getTileWidthPx();
     int yPx = dy * getTileHeightPx();
     drawTile(g, tileX, tileY, xPx, yPx);
@@ -45,5 +44,33 @@ public class TileSet {
 
   public int getTileHeightPx() {
     return tileHeightPx;
+  }
+
+  public int getTilesWide() {
+    return tilesWide;
+  }
+
+  public int getTilesHigh() {
+    return tilesHigh;
+  }
+
+  public int getWidthPx() {
+    return getTileWidthPx() * getTilesWide();
+  }
+
+  public int getHeightPx() {
+    return getTileHeightPx() * getTilesHigh();
+  }
+
+  public Dimension getPreferredSize() {
+    return new Dimension(getWidthPx(), getHeightPx());
+  }
+
+  public Point scalePoint(Point point) {
+    return Util.scalePoint(point, tileWidthPx, tileHeightPx);
+  }
+
+  public int getIndex(Point point) {
+    return point.y * tilesWide + point.x;
   }
 }

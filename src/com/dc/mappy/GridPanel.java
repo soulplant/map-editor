@@ -36,15 +36,11 @@ public class GridPanel extends JPanel {
         repaint();
       }
 
-      private Point getLogicalPointFromScreenPoint(Point point) {
-        int x = point.x / tileSet.getTileWidthPx();
-        int y = point.y / tileSet.getTileHeightPx();
-        return new Point(x, y);
-      }
     });
     addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
+        controller.onMouseMoved(getLogicalPointFromScreenPoint(e.getPoint()));
         controller.onMousePressed();
         repaint();
       }
@@ -63,6 +59,12 @@ public class GridPanel extends JPanel {
       }
     });
     setFocusable(true);
+  }
+
+  private Point getLogicalPointFromScreenPoint(Point point) {
+    int x = point.x / tileSet.getTileWidthPx();
+    int y = point.y / tileSet.getTileHeightPx();
+    return new Point(x, y);
   }
 
   private void onKeyPressed(KeyEvent e) {
